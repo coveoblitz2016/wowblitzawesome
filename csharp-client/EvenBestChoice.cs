@@ -51,29 +51,31 @@ namespace Coveo
         private string SeekTiles(GameState gameState, IPathfinder pathfinder, params Tile[] soughtTiles)
         {
             // Scan game board and find path data to all matching tiles
-            List<Tuple<Pos, PathData>> moves = new List<Tuple<Pos, PathData>>();
+            List<Tuple<Pos, Tile, PathData>> moves = new List<Tuple<Pos, Tile, PathData>>();
             SortedSet<Tile> tiles = new SortedSet<Tile>(soughtTiles);
             for (int i = 0; i < gameState.board.Length; ++i) {
                 for (int j = 0; j < gameState.board[i].Length; ++j) {
                     Tile tile = gameState.board[i][j];
                     if (tiles.Contains(tile)) {
-                        //;
                         Console.WriteLine("EvenBestChoice: seeking path to ({0},{1}) [tile {2}]", i, j, tile);
-                        moves.Add(new Tuple<Pos, PathData>(new Pos(i, j), null));
+                        moves.Add(Tuple.Create(new Pos(i, j), tile, (PathData) null));
                     }
                 }
             }
             Console.WriteLine("EvenBestChoice: seeking paths to {0} tiles", moves.Count);
             for (int i = 0; i < moves.Count; ++i) {
+                Stopwatch watch = Stopwatch.StartNew();
                 PathData pathData = pathfinder.pathTo(moves[i].Item1, gameState.myHero.pos, gameState.board);
-                moves[i] = Tuple.Create(moves[i].Item1, pathData);
+                Console.WriteLine("EvenBestChoice: sought path to ({0},{1}) [tile {2}] in {3}ms",
+                    moves[i].Item1.x, moves[i].Item1.y, moves[i].Item2, watch.ElapsedMilliseconds);
+                moves[i] = Tuple.Create(moves[i].Item1, moves[i].Item2, pathData);
             }
 
             // Seek to minimize lost health
-            moves.Sort((a, b) => a.Item2.lostHealth - b.Item2.lostHealth);
+            moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
 
             if (moves.Count != 0) {
-                Direction move = moves[0].Item2.nextDirection;
+                Direction move = moves[0].Item3.nextDirection;
                 string moveStr = null;
                 if (move == Direction.North) {
                     moveStr = CoveoBlitz.Direction.North;
