@@ -38,7 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Commandlineparameters>3y7nddi5 training</Commandlineparameters>
+    <Commandlineparameters>3y7nddi5 training browser</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -67,7 +67,6 @@
     <Compile Include="Dijkstra.cs" />
     <Compile Include="Core\DataContracts.cs" />
     <Compile Include="Core\Enums.cs" />
-    <Compile Include="Direction.cs" />
     <Compile Include="EvenBestChoice.cs" />
     <Compile Include="IBestChoice.cs" />
     <Compile Include="Location.cs" />
