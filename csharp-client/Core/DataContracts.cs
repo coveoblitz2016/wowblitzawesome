@@ -83,6 +83,17 @@ namespace CoveoBlitz
 
         [DataMember]
         public int y;
+
+        public Pos(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        public Pos()
+        {
+            // TODO: Complete member initialization
+        }
     }
 
     [DataContract]

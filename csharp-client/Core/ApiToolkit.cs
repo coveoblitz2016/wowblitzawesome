@@ -181,10 +181,10 @@ namespace CoveoBlitz
                         break;
                 }
 
-                x++;
-                if (x == size) {
-                    x = 0;
-                    y++;
+                y++;
+                if (y == size) {
+                    y = 0;
+                    x++;
                 }
             }
 
