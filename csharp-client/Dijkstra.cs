@@ -19,7 +19,7 @@ namespace Coveo
             {
                pointValues[x] = new int[size];
             }
-            pointValues[currentLocation.x][currentLocation.y] = 0;
+            pointValues[currentLocation.x][currentLocation.y] = -1;
             Queue<Pos> newMarkedPoints = new Queue<Pos>();
             newMarkedPoints.Enqueue(currentLocation);
             size--;
@@ -128,20 +128,24 @@ namespace Coveo
                 if (b == 0) { b = 10000; }
                 if (c == 0) { c = 10000; }
                 if (d == 0) { d = 10000; }
-                if (a <= b && a <= c && a <= d) {
-                    pointValues[currentPos.x - 1][currentPos.y] = 9999999;
-                    currentPos = new Pos(currentPos.x - 1, currentPos.y);
-                } else if (b <= a && b <= c && b <= d) {
-                    pointValues[currentPos.x][currentPos.y - 1] = 9999999;
-                    currentPos = new Pos(currentPos.x, currentPos.y - 1);
-                } else if (c <= b && c <= a && c <= d) {
-                    pointValues[currentPos.x][currentPos.y + 1] = 9999999;
-                    currentPos = new Pos(currentPos.x, currentPos.y + 1);
-                }
-                else if (d <= b && d <= c && d <= a) {
-                    pointValues[currentPos.x + 1][currentPos.y] = 9999999;
-                    currentPos = new Pos(currentPos.x + 1, currentPos.y);
-                }
+                try {
+                    if (a <= b && a <= c && a <= d) {
+                        pointValues[currentPos.x - 1][currentPos.y] = 9999999;
+                        currentPos = new Pos(currentPos.x - 1, currentPos.y);
+                    } else if (b <= a && b <= c && b <= d) {
+                        pointValues[currentPos.x][currentPos.y - 1] = 9999999;
+                        currentPos = new Pos(currentPos.x, currentPos.y - 1);
+                    } else if (c <= b && c <= a && c <= d) {
+                        pointValues[currentPos.x][currentPos.y + 1] = 9999999;
+                        currentPos = new Pos(currentPos.x, currentPos.y + 1);
+                    } else if (d <= b && d <= c && d <= a) {
+                        pointValues[currentPos.x + 1][currentPos.y] = 9999999;
+                        currentPos = new Pos(currentPos.x + 1, currentPos.y);
+                    }
+                } catch (Exception) {
+                    Console.Out.WriteLine("Couldn't find path and had to abandon.");
+                    return pathData;
+                } 
             }
             Console.Out.WriteLine("Move to " + pathData.nextDirection + " with cost " + pathData.distance + " to go to" + target.x + "," + target.y);
             return pathData;
