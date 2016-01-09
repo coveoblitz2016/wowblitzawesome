@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Coveo
 {
-    enum Direction
+    public enum Direction
     {
         North, South, East, West
     };

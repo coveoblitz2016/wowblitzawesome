@@ -3,6 +3,7 @@
 using CoveoBlitz;
 using CoveoBlitz.RandomBot;
 using System;
+using CoveoBlitz.WowBlitzAwsome.Bot;
 
 namespace Coveo
 {
@@ -27,9 +28,12 @@ namespace Coveo
             string serverURL = "http://blitz2016.xyz:8080";
             string gameId = args.Length == 3 ? args[2] : null;
 
+            ISimpleBot bot = new RandomBot();
+            //ISimpleBot bot = new BestBot();
+
             SimpleBotRunner runner = new SimpleBotRunner(
                 new ApiToolkit(serverURL, args[0], args[1] == "training", gameId),
-                new RandomBot());
+                bot);
 
             runner.Run();
 
