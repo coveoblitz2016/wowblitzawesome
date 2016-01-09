@@ -77,7 +77,7 @@ namespace Coveo
                 target = null;
             }
             lastPathData = pathData;
-            return pathData.nextDirection;
+            return (pathData?.nextDirection) ?? Direction.Stay;
         }
 
         private PathData SeekMine(GameState gameState, IPathfinder pathfinder)
