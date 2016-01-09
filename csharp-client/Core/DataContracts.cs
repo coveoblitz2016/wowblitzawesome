@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace CoveoBlitz
@@ -92,7 +93,18 @@ namespace CoveoBlitz
 
         public Pos()
         {
-            // TODO: Complete member initialization
+            this.x = 0;
+            this.y = 0;
+        }
+
+        public static int DistanceBetween(Pos p1, Pos p2)
+        {
+            Debug.Assert(p1 != null);
+            Debug.Assert(p2 != null);
+
+            int xDist = p1.x < p2.x ? p2.x - p1.x : p1.x - p2.x;
+            int yDist = p1.y < p2.y ? p2.y - p1.y : p1.y - p2.y;
+            return xDist + yDist;
         }
     }
 

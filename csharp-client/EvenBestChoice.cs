@@ -36,6 +36,7 @@ namespace Coveo
         private int? heroLife;
         private Pos heroPos;
         private TargetInfo target;
+        private PathData lastPathData;
 
         public string BestMove(GameState gameState, IPathfinder pathfinder)
         {
@@ -47,38 +48,39 @@ namespace Coveo
             heroLife = gameState.myHero.life;
 
             // If we suddenly moved a lot, maybe we should reconsider.
-            if (heroPos != null && MovedALot(heroPos, gameState.myHero.pos)) {
+            if (heroPos != null && Pos.DistanceBetween(heroPos, gameState.myHero.pos) >= 2) {
                 Console.WriteLine("EvenBestChoice: TELEPORTED! Maybe we were killed?");
                 target = null;
             }
             heroPos = gameState.myHero.pos;
 
-            string move = null;
+            PathData pathData = null;
             if (target != null) {
                 Console.WriteLine("EvenBestChoice: Current target: ({0},{1}) [tile {2}]", target.pos.x, target.pos.y, target.tile);
-                PathData pathData = pathfinder.pathTo(target.pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
-                move = pathData.nextDirection;
+                pathData = pathfinder.pathTo(target.pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
             } else {
                 // Seek mine if possible, otherwise seek a tavern
                 if (gameState.myHero.life >= 50) {
-                    move = SeekMine(gameState, pathfinder);
+                    pathData = SeekMine(gameState, pathfinder);
                 }
-                if (String.IsNullOrEmpty(move) && gameState.myHero.life < 50) {
-                    move = SeekTavern(gameState, pathfinder);
+                if (pathData == null && gameState.myHero.life < 50) {
+                    pathData = SeekTavern(gameState, pathfinder);
                 }
-            }
-            if (String.IsNullOrEmpty(move)) {
-                move = Direction.Stay;
             }
 
             // If this is the last move, release target unless it's a tavern and we're < 90 life
-            if (target != null && move != Direction.Stay && target.distance <= 1 && (target.tile != Tile.TAVERN || gameState.myHero.life >= 90)) {
+            if (target != null && pathData != null && pathData.nextDirection != Direction.Stay &&
+                Pos.DistanceBetween(target.pos, gameState.myHero.pos) <= 1 && (target.tile != Tile.TAVERN || gameState.myHero.life >= 90)) {
+
+                Console.WriteLine("EvenBestChoice: Reached destination ({0},{1}) [{2}], releasing target",
+                    target.pos.x, target.pos.y, target.tile);
                 target = null;
             }
-            return move;
+            lastPathData = pathData;
+            return pathData.nextDirection;
         }
 
-        private string SeekMine(GameState gameState, IPathfinder pathfinder)
+        private PathData SeekMine(GameState gameState, IPathfinder pathfinder)
         {
             List<Tile> mineTiles = new List<Tile>(new[] {
                 Tile.GOLD_MINE_NEUTRAL,
@@ -99,12 +101,12 @@ namespace Coveo
             return SeekTiles(gameState, pathfinder, MINE_COST, mineTiles.ToArray());
         }
 
-        private string SeekTavern(GameState gameState, IPathfinder pathfinder)
+        private PathData SeekTavern(GameState gameState, IPathfinder pathfinder)
         {
             return SeekTiles(gameState, pathfinder, TAVERN_COST, Tile.TAVERN);
         }
 
-        private string SeekTiles(GameState gameState, IPathfinder pathfinder, int tileCost, params Tile[] soughtTiles)
+        private PathData SeekTiles(GameState gameState, IPathfinder pathfinder, int tileCost, params Tile[] soughtTiles)
         {
             // Scan game board and find path data to all matching tiles
             List<Tuple<Pos, Tile, PathData>> moves = new List<Tuple<Pos, Tile, PathData>>();
@@ -114,18 +116,18 @@ namespace Coveo
                     Tile tile = gameState.board[x][y];
                     if (tiles.Contains(tile)) {
                         Pos pos = new Pos(x, y);
-                        PathData pathData = pathfinder.pathTo(pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
+                        PathData curPathData = pathfinder.pathTo(pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
                         
                         // Fix health if we don't have one
-                        if (pathData.lostHealth == 0) {
-                            pathData.lostHealth = pathData.distance;
+                        if (curPathData.lostHealth == 0) {
+                            curPathData.lostHealth = curPathData.distance;
                         }
 
                         // Add tile cost to health cost
-                        pathData.lostHealth += tileCost;
+                        curPathData.lostHealth += tileCost;
                         
                         // Add potential target.
-                        moves.Add(Tuple.Create(pos, tile, pathData));
+                        moves.Add(Tuple.Create(pos, tile, curPathData));
                     }
                 }
             }
@@ -133,33 +135,18 @@ namespace Coveo
             // Seek to minimize lost health.
             moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
 
-            string move = null;
+            // Find a move that will take us to the target.
+            PathData pathData = null;
             if (moves.Count != 0 && moves[0].Item3.distance < 1000) {
                 Debug.Assert(target == null);
-                target = new TargetInfo(moves[0].Item1, moves[0].Item3.distance, moves[0].Item2);
-                move = moves[0].Item3.nextDirection;
-                if (moves[0].Item3.lostHealth >= gameState.myHero.life) {
+                pathData = moves[0].Item3;
+                target = new TargetInfo(moves[0].Item1, pathData.distance, moves[0].Item2);
+                if (pathData.lostHealth >= gameState.myHero.life) {
                     Console.WriteLine("EvenBestChoice: WARNING: current choice will kill us: costs {0}, remaining life {1}",
-                        moves[0].Item3.lostHealth, gameState.myHero.life);
+                        pathData.lostHealth, gameState.myHero.life);
                 }
             }
-            return !String.IsNullOrEmpty(move) ? move : null;
-        }
-
-        private static bool MovedALot(Pos lastPos, Pos curPos)
-        {
-            int xDist, yDist;
-            if (lastPos.x < curPos.x) {
-                xDist = curPos.x - lastPos.x;
-            } else {
-                xDist = lastPos.x - curPos.x;
-            }
-            if (lastPos.y < curPos.y) {
-                yDist = curPos.y - lastPos.y;
-            } else {
-                yDist = lastPos.y - curPos.y;
-            }
-            return (xDist + yDist) >= 2;
+            return pathData;
         }
     }
 }
