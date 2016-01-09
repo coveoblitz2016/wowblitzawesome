@@ -22,6 +22,7 @@ namespace Coveo
             pointValues[currentLocation.x][currentLocation.y] = 0;
             Queue<Pos> newMarkedPoints = new Queue<Pos>();
             newMarkedPoints.Enqueue(currentLocation);
+            size--;
             while (newMarkedPoints.Count() != 0) {
                 Pos pos = newMarkedPoints.Dequeue();
                 int basecost = pointValues[pos.x][pos.y];
@@ -29,7 +30,7 @@ namespace Coveo
                 int y;
                 x = pos.x;
                 y = pos.y + 1;
-                try {
+                if(x<= size && x >=0 && y <= size && y >=0) {
                     if (target.x == x && target.y == y) {
                         pathData.distance = tilePrice(board[x][y]) + basecost + 1;
                         break;
@@ -38,10 +39,10 @@ namespace Coveo
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
                         newMarkedPoints.Enqueue(new Pos(x, y));
                     }
-                } catch (Exception) { }
+                }
                 x = pos.x + 1;
                 y = pos.y;
-                try {
+                if(x<= size && x >=0 && y <= size && y >=0) {
                     if (target.x == x && target.y == y) {
                         pathData.distance = tilePrice(board[x][y]) + basecost + 1;
                         break;
@@ -50,10 +51,10 @@ namespace Coveo
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
                         newMarkedPoints.Enqueue(new Pos(x, y));
                     }
-                } catch (Exception) { }
+                }
                 x = pos.x - 1;
                 y = pos.y;
-                try {
+                if(x<= size && x >=0 && y <= size && y >=0) {
                     if (target.x == x && target.y == y) {
                         pathData.distance = tilePrice(board[x][y]) + basecost + 1;
                         break;
@@ -62,10 +63,10 @@ namespace Coveo
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
                         newMarkedPoints.Enqueue(new Pos(x, y));
                     }
-                } catch (Exception) { }
+                }
                 x = pos.x;
                 y = pos.y - 1;
-                try {
+                if(x<= size && x >=0 && y <= size && y >=0) {
                     if (target.x == x && target.y == y) {
                         pathData.distance = tilePrice(board[x][y]) + basecost + 1;
                         break;
@@ -74,7 +75,7 @@ namespace Coveo
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
                         newMarkedPoints.Enqueue(new Pos(x, y));
                     }
-                } catch (Exception) { }
+                }
             }
             //Console.Out.WriteLine(resultCost);
 
@@ -83,45 +84,46 @@ namespace Coveo
             while (true) {
                 //Console.Out.WriteLine(currentPos.x + "," + currentPos.y);
                 int x, y, a=99999,b=99999,c=99999,d=99999;
-                    try {
+                
                 x = currentPos.x - 1;
                 y = currentPos.y;
-                if (currentLocation.x == x && currentLocation.y == y) {
-                    pathData.nextDirection = Direction.East;
-                    break;
-                }
-                    a = pointValues[x][y];
-
-                    } catch (Exception) { }
-                    try {
-                    x = currentPos.x;
-                    y = currentPos.y - 1;
+                if (x <= size && x >= 0 && y <= size && y >= 0) {
                     if (currentLocation.x == x && currentLocation.y == y) {
                         pathData.nextDirection = Direction.North;
                         break;
                     }
+                    a = pointValues[x][y];
+
+                }
+                    x = currentPos.x;
+                    y = currentPos.y - 1;
+                if (x <= size && x >= 0 && y <= size && y >= 0) {
+                    if (currentLocation.x == x && currentLocation.y == y) {
+                        pathData.nextDirection = Direction.East;
+                        break;
+                    }
                     b = pointValues[x][y];
-                } catch (Exception) { }
-                try {
+                }
 
                 x = currentPos.x;
                 y = currentPos.y + 1;
-                if (currentLocation.x == x && currentLocation.y == y) {
-                    pathData.nextDirection = Direction.South;
-                    break;
+                    if (x <= size && x >= 0 && y <= size && y >= 0) {
+                    if (currentLocation.x == x && currentLocation.y == y) {
+                        pathData.nextDirection = Direction.West;
+                        break;
+                    }
+                    c = pointValues[x][y];
                 }
-                c = pointValues[x][y];
-                } catch (Exception) { }
-                try {
 
                 x = currentPos.x + 1;
                 y = currentPos.y;
-                if (currentLocation.x == x && currentLocation.y == y) {
-                    pathData.nextDirection = Direction.West;
-                    break;
+                if (x <= size && x >= 0 && y <= size && y >= 0) {
+                    if (currentLocation.x == x && currentLocation.y == y) {
+                        pathData.nextDirection = Direction.South;
+                        break;
+                    }
+                    d = pointValues[x][y];
                 }
-                d = pointValues[x][y];
-                } catch (Exception) { }
                 if (a == 0) { a = 10000; }
                 if (b == 0) { b = 10000; }
                 if (c == 0) { c = 10000; }
