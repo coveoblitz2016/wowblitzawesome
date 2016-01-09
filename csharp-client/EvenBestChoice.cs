@@ -36,15 +36,20 @@ namespace Coveo
         private int? heroLife;
         private Pos heroPos;
         private TargetInfo target;
-        private PathData lastPathData;
 
         public string BestMove(GameState gameState, IPathfinder pathfinder)
+        {
+            return OneBestMove(gameState, pathfinder);
+        }
+
+        private string OneBestMove(GameState gameState, IPathfinder pathfinder)
         {
             String murderDirection = murderAlgo(gameState);
             if (!string.IsNullOrEmpty(murderDirection)) {
                 Console.Out.WriteLine("WARWARWAR");
                 return murderDirection;
             }
+
             // If we suddenly lost a lot of life, maybe we should reconsider.
             if (heroLife.HasValue && heroLife.Value >= (gameState.myHero.life + 20)) {
                 Console.WriteLine("EvenBestChoice: LOW ON LIFE! Maybe we were attacked?");
@@ -81,7 +86,6 @@ namespace Coveo
                     target.pos.x, target.pos.y, target.tile);
                 target = null;
             }
-            lastPathData = pathData;
             string nextDirection = pathData != null ? pathData.nextDirection : null;
             return !String.IsNullOrEmpty(nextDirection) ? nextDirection : Direction.Stay;
         }
