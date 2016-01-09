@@ -29,14 +29,14 @@ namespace Coveo
             bool trainingMode = args[1] == "training" || args[1] == "HAX";
             string gameId = args.Length == 3 ? args[2] : null;
 
-            //IBestChoice bestChoice = new EvenBestChoice();
-            //IPathfinder pathfinder = new Disjkstra();
+            IBestChoice bestChoice = new EvenBestChoice();
+            IPathfinder pathfinder = new Disjkstra();
 
             ISimpleBot bot;
             if (args[1] == "HAX") {
                 bot = new ManualBot();
-            //} else if (bestChoice != null && pathfinder != null) {
-            //    bot = new BestBot(bestChoice, pathfinder);
+            } else if (bestChoice != null && pathfinder != null) {
+                bot = new BestBot(bestChoice, pathfinder);
             } else {
                 bot = new RandomBot();
             }
