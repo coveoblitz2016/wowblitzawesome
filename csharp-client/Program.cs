@@ -31,8 +31,8 @@ namespace Coveo
             string gameId = args.Length == 3 && !trainingMode ? args[2] : null;
             bool showBrowser = trainingMode && args.Length == 3;
 
-            IBestChoice bestChoice = null;//new EvenBestChoice();
-            IPathfinder pathfinder = null;//new Disjkstra();
+            IBestChoice bestChoice = new EvenBestChoice();//new EvenBestChoice();
+            IPathfinder pathfinder = new Disjkstra();//new Disjkstra();
 
             ISimpleBot bot;
             if (bestChoice != null && pathfinder != null) {
