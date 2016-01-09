@@ -70,6 +70,7 @@
     <Compile Include="EvenBestChoice.cs" />
     <Compile Include="IBestChoice.cs" />
     <Compile Include="Location.cs" />
+    <Compile Include="MultiPathfinder.cs" />
     <Compile Include="PathData.cs" />
     <Compile Include="Pathfinder.cs" />
     <Compile Include="Program.cs" />
