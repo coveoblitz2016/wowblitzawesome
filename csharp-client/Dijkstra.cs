@@ -9,7 +9,7 @@ namespace Coveo
 {
     class Disjkstra : IPathfinder
     {
-        public PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 5)
+        public PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 10)
         {
             //int resultCost = 0;
             PathData pathData = new PathData();
