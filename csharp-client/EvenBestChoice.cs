@@ -36,9 +36,13 @@ namespace Coveo
         private int? heroLife;
         private Pos heroPos;
         private TargetInfo target;
-        private PathData lastPathData;
 
         public string BestMove(GameState gameState, IPathfinder pathfinder)
+        {
+            return OneBestMove(gameState, pathfinder);
+        }
+
+        private string OneBestMove(GameState gameState, IPathfinder pathfinder)
         {
             // If we suddenly lost a lot of life, maybe we should reconsider.
             if (heroLife.HasValue && heroLife.Value >= (gameState.myHero.life + 20)) {
@@ -76,7 +80,6 @@ namespace Coveo
                     target.pos.x, target.pos.y, target.tile);
                 target = null;
             }
-            lastPathData = pathData;
             string nextDirection = pathData != null ? pathData.nextDirection : null;
             return !String.IsNullOrEmpty(nextDirection) ? nextDirection : Direction.Stay;
         }
