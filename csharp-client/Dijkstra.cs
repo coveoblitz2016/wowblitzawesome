@@ -11,7 +11,7 @@ namespace Coveo
     {
         public PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 5)
         {
-            int resultCost = 0;
+            //int resultCost = 0;
             PathData pathData = new PathData();
             int size = board.GetLength(0);
             int[][] pointValues = new int[size][];

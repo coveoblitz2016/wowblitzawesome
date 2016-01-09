@@ -64,8 +64,21 @@ namespace Coveo
             moves.Sort((a, b) => a.lostHealth - b.lostHealth);
 
             if (moves.Count != 0) {
-                // #clp TODO fixme
-                return moves[0].nextDirection.ToString();
+                Direction move = moves[0].nextDirection;
+                string moveStr = null;
+                if (move == Direction.North) {
+                    moveStr = CoveoBlitz.Direction.North;
+                } else if (move == Direction.South) {
+                    moveStr = CoveoBlitz.Direction.South;
+                } else if (move == Direction.East) {
+                    moveStr = CoveoBlitz.Direction.East;
+                } else if (move == Direction.West) {
+                    moveStr = CoveoBlitz.Direction.West;
+                }
+                if (moveStr == null) {
+                    Console.WriteLine("EvenBestChoice: unknown direction: {0}", move);
+                }
+                return moveStr ?? CoveoBlitz.Direction.Stay;
             } else {
                 return CoveoBlitz.Direction.Stay;
             }

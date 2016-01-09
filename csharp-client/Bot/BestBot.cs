@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Coveo;
 
 namespace CoveoBlitz.WowBlitzAwsome.Bot
@@ -25,8 +26,13 @@ namespace CoveoBlitz.WowBlitzAwsome.Bot
         public string Move(GameState state)
         {
             if (bestChoice != null && pathfinder != null) {
-                return bestChoice.BestMove(state, pathfinder);
+                Stopwatch watch = Stopwatch.StartNew();
+                string move = bestChoice.BestMove(state, pathfinder);
+                long elapsed_ms = watch.ElapsedMilliseconds;
+                Console.WriteLine("BestBot: next move: {0} (computed in {1} ms)", move, elapsed_ms);
+                return move;
             } else {
+                Console.WriteLine("BestBot: next move: NONE");
                 return CoveoBlitz.Direction.Stay;
             }
         }
