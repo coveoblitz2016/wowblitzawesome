@@ -43,7 +43,7 @@ namespace Coveo
             
 			// add a random param to start browser in training mode
             SimpleBotRunner runner = new SimpleBotRunner(
-                new ApiToolkit(serverURL, apiKey, trainingMode, gameId),
+                new ApiToolkit(serverURL, apiKey, trainingMode, gameId, 300),
 				bot,
                 showBrowser);
 

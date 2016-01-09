@@ -13,14 +13,27 @@ namespace Coveo
     /// </summary>
     public class EvenBestChoice : IBestChoice
     {
-        private bool loggedCanUseHealth = false;
+        public const int SPIKE_COST = 10;
+
+        private Pos target;
+        private Tile targetTile = Tile.FREE;
 
         public string BestMove(GameState gameState, IPathfinder pathfinder)
         {
-            if (gameState.myHero.life >= 50) {
-                return SeekMine(gameState, pathfinder);
+            if (target != null) {
+                PathData pathData = pathfinder.pathTo(target, gameState.myHero.pos, gameState.board, SPIKE_COST);
+                // If this is the last move, release target unless it's a tavern and we're < 90 life
+                if (pathData.distance <= 1 && (targetTile != Tile.TAVERN || gameState.myHero.life >= 90)) {
+                    target = null;
+                    targetTile = Tile.FREE;
+                }
+                return pathData.nextDirection;
             } else {
-                return SeekTavern(gameState, pathfinder);
+                if (gameState.myHero.life >= 50) {
+                    return SeekMine(gameState, pathfinder);
+                } else {
+                    return SeekTavern(gameState, pathfinder);
+                }
             }
         }
 
@@ -59,56 +72,30 @@ namespace Coveo
                 for (int y = 0; y < gameState.board[x].Length; ++y) {
                     Tile tile = gameState.board[x][y];
                     if (tiles.Contains(tile)) {
-                        //Console.WriteLine("EvenBestChoice: seeking path to ({0},{1}) [tile {2}]", x, y, tile);
-                        moves.Add(Tuple.Create(new Pos(x, y), tile, (PathData) null));
+                        Pos pos = new Pos(x, y);
+                        PathData pathData = pathfinder.pathTo(pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
+                        moves.Add(Tuple.Create(pos, tile, pathData));
+
+                        // Fix health if we don't have one
+                        if (pathData.lostHealth == 0) {
+                            pathData.lostHealth = pathData.distance;
+                        }
                     }
                 }
             }
-            //Console.WriteLine("EvenBestChoice: seeking paths to {0} tiles", moves.Count);
-            bool canUseHealth = true;
-            for (int i = 0; i < moves.Count; ++i) {
-                Stopwatch watch = Stopwatch.StartNew();
-                PathData pathData = pathfinder.pathTo(moves[i].Item1, gameState.myHero.pos, gameState.board);
-                //Console.WriteLine("EvenBestChoice: sought path to ({0},{1}) [tile {2}] in {3}ms",
-                //    moves[i].Item1.x, moves[i].Item1.y, moves[i].Item2, watch.ElapsedMilliseconds);
-                moves[i] = Tuple.Create(moves[i].Item1, moves[i].Item2, pathData);
-                if (pathData.lostHealth <= 0) {
-                    canUseHealth = false;
-                }
-            }
 
-            // Seek to minimize lost health if possible, otherwise distance
-            if (!loggedCanUseHealth) {
-                if (canUseHealth) {
-                    Console.WriteLine("EvenBestChoice: CAN use health to find best move");
-                } else {
-                    Console.WriteLine("EvenBestChoice: CANNOT use health to find best move");
-                }
-                loggedCanUseHealth = true;
-            }
-            if (canUseHealth) {
-                moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
-            } else {
-                moves.Sort((a, b) => a.Item3.distance - b.Item3.distance);
-            }
+            // Seek to minimize lost health.
+            moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
 
-            string moveStr = null;
+            string move = null;
             if (moves.Count != 0) {
-                string move = moves[0].Item3.nextDirection;
-                if (move == Direction.North) {
-                    moveStr = Direction.North;
-                } else if (move == Direction.South) {
-                    moveStr = Direction.South;
-                } else if (move == Direction.East) {
-                    moveStr = Direction.East;
-                } else if (move == Direction.West) {
-                    moveStr = Direction.West;
-                }
-                if (moveStr == null) {
-                    Console.WriteLine("EvenBestChoice: unknown direction: {0}", move);
-                }
+                Debug.Assert(target == null);
+                Debug.Assert(targetTile == Tile.FREE);
+                target = moves[0].Item1;
+                targetTile = moves[0].Item2;
+                move = moves[0].Item3.nextDirection;
             }
-            return moveStr ?? Direction.Stay;
+            return move ?? Direction.Stay;
         }
     }
 }
