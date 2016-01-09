@@ -11,5 +11,6 @@ namespace Coveo
         public string nextDirection;
         public int lostHealth;
         public int distance;
+		public Pos destination;
     }
 }

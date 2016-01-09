@@ -15,7 +15,7 @@ namespace CoveoBlitz
 
         public Tile[][] board { get; set; }
 
-		private Pos GetTilePos(Tile tile) 
+		public Pos GetTilePos(Tile tile) 
 		{
 			for (int x = 0; x < this.board.Length; ++x) {
 				for (int y = 0; y < this.board [x].Length; ++y) {
@@ -27,6 +27,22 @@ namespace CoveoBlitz
 
 			// Should not happen...
 			return null;
+		}
+
+		public List<Pos> GetTilesPos(List<Tile> tiles) {
+			List<Pos> minesPos = new List<Pos>();
+
+			tiles.ForEach ((Tile tile) => {
+				for (int x = 0; x < this.board.Length; ++x) {
+					for (int y = 0; y < this.board [x].Length; ++y) {
+						if (this.board [x] [y] == tile) {
+							minesPos.Add(new Pos(x, y));
+						}
+					}
+				}
+			});
+
+			return minesPos;
 		}
 
 		public List<Tile> GetAvailableMinesTiles ()
@@ -52,9 +68,9 @@ namespace CoveoBlitz
 			return mineTiles;
 		}
 
-		private List<Pos> GetAvailableMinesPos ()
+		public List<Pos> GetAvailableMinesPos ()
 		{
-			return this.GetAvailableMinesTiles().Select ((Tile mineTile) => this.GetTilePos(mineTile)).ToList();
+			return this.GetTilesPos (this.GetAvailableMinesTiles ());
 		}
     }
 }

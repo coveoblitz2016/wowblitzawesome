@@ -149,10 +149,14 @@ namespace Coveo
                 } 
             }
             Console.Out.WriteLine("Move to " + pathData.nextDirection + " with cost " + pathData.distance + " to go to" + target.x + "," + target.y);
-            pathData.lostHealth = pathData.distance;
-            return pathData;
+            
+			pathData.lostHealth = pathData.distance;
+			pathData.destination = target;
+            
+			return pathData;
         }
-        private static int tilePrice(Tile tile)
+        
+		private static int tilePrice(Tile tile)
         {
             switch (tile) {
                 case Tile.FREE:
@@ -174,6 +178,4 @@ namespace Coveo
             return -1;
         }
     }
-
-
 }

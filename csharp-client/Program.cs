@@ -36,7 +36,8 @@ namespace Coveo
 
             ISimpleBot bot;
             if (bestChoice != null && pathfinder != null) {
-                bot = new BestBot(bestChoice, pathfinder);
+                //bot = new BestBot(bestChoice, pathfinder);
+				bot = new JackBot(pathfinder);
             } else {
                 bot = new RandomBot();
             }
