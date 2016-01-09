@@ -54,13 +54,17 @@ namespace CoveoBlitz
                 // we send that to the server
                 while (api.gameState.finished == false && api.errored == false)
                 {
-                    try
-                    {
-                        api.MoveHero(simpleBot.Move(api.gameState));
+                    try {
+                        string direction = Direction.Stay;
+                        Thread moveThread = new Thread(() => direction = simpleBot.Move(api.gameState));
+                        moveThread.Start();
+                        moveThread.Join(800);
+                        api.MoveHero(direction);
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
+                        api.MoveHero(Direction.Stay);
                     }
                 }
             }
