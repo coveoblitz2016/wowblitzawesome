@@ -13,6 +13,8 @@ namespace Coveo
     /// </summary>
     public class EvenBestChoice : IBestChoice
     {
+        private bool loggedCanUseHealth = false;
+
         public string BestMove(GameState gameState, IPathfinder pathfinder)
         {
             if (gameState.myHero.life >= 50) {
@@ -63,20 +65,36 @@ namespace Coveo
                 }
             }
             //Console.WriteLine("EvenBestChoice: seeking paths to {0} tiles", moves.Count);
+            bool canUseHealth = true;
             for (int i = 0; i < moves.Count; ++i) {
                 Stopwatch watch = Stopwatch.StartNew();
                 PathData pathData = pathfinder.pathTo(moves[i].Item1, gameState.myHero.pos, gameState.board);
                 //Console.WriteLine("EvenBestChoice: sought path to ({0},{1}) [tile {2}] in {3}ms",
                 //    moves[i].Item1.x, moves[i].Item1.y, moves[i].Item2, watch.ElapsedMilliseconds);
                 moves[i] = Tuple.Create(moves[i].Item1, moves[i].Item2, pathData);
+                if (pathData.lostHealth <= 0) {
+                    canUseHealth = false;
+                }
             }
 
-            // Seek to minimize lost health
-            moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
+            // Seek to minimize lost health if possible, otherwise distance
+            if (!loggedCanUseHealth) {
+                if (canUseHealth) {
+                    Console.WriteLine("EvenBestChoice: CAN use health to find best move");
+                } else {
+                    Console.WriteLine("EvenBestChoice: CANNOT use health to find best move");
+                }
+                loggedCanUseHealth = true;
+            }
+            if (canUseHealth) {
+                moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
+            } else {
+                moves.Sort((a, b) => a.Item3.distance - b.Item3.distance);
+            }
 
+            string moveStr = null;
             if (moves.Count != 0) {
                 string move = moves[0].Item3.nextDirection;
-                string moveStr = null;
                 if (move == Direction.North) {
                     moveStr = Direction.North;
                 } else if (move == Direction.South) {
@@ -89,10 +107,8 @@ namespace Coveo
                 if (moveStr == null) {
                     Console.WriteLine("EvenBestChoice: unknown direction: {0}", move);
                 }
-                return moveStr ?? Direction.Stay;
-            } else {
-                return Direction.Stay;
             }
+            return moveStr ?? Direction.Stay;
         }
     }
 }
