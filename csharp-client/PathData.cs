@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Coveo
 {
-    class PathData
+    public class PathData
     {
         public Pos nextDirection;
         public int lostHealth;

@@ -60,8 +60,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot\AStar.cs" />
     <Compile Include="Core\DataContracts.cs" />
     <Compile Include="Core\Enums.cs" />
+    <Compile Include="Direction.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="PathData.cs" />
+    <Compile Include="Pathfinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Core\GameState.cs" />
     <Compile Include="Core\ISimpleBot.cs" />
