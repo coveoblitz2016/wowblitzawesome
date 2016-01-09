@@ -8,6 +8,7 @@ namespace Coveo
 {
     internal class MyBot
     {
+        public static int spikeDamage = 10;
         /**
          * @param args args[0] Private key
          * @param args args[1] [training|arena]
