@@ -31,8 +31,8 @@ namespace Coveo
             string gameId = args.Length == 3 && !trainingMode ? args[2] : null;
             bool showBrowser = trainingMode && args.Length == 3;
 
-            IBestChoice bestChoice = new EvenBestChoice();//new EvenBestChoice();
-            IPathfinder pathfinder = new Disjkstra();//new Disjkstra();
+            IBestChoice bestChoice = new EvenBestChoice();
+            IPathfinder pathfinder = new Disjkstra();
 
             ISimpleBot bot;
             if (bestChoice != null && pathfinder != null) {
@@ -43,7 +43,7 @@ namespace Coveo
             
 			// add a random param to start browser in training mode
             SimpleBotRunner runner = new SimpleBotRunner(
-                new ApiToolkit(serverURL, apiKey, trainingMode, gameId),
+                new ApiToolkit(serverURL, apiKey, trainingMode, gameId, 300),
 				bot,
                 showBrowser);
 
