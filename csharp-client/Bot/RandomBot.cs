@@ -30,6 +30,8 @@ namespace CoveoBlitz.RandomBot
         {
             string direction;
 
+
+
             switch (random.Next(0, 5)) {
                 case 0:
                     direction = Direction.East;

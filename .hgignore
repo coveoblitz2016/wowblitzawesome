@@ -1,0 +1,5 @@
+syntax: regexp
+csharp-client/obj.*
+csharp-client/bin.*
+syntax: glob
+csharp-client/MyBot.sln
