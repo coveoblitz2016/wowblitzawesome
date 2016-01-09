@@ -44,7 +44,7 @@ namespace Coveo
 
         private string OneBestMove(GameState gameState, IPathfinder pathfinder)
         {
-            String murderDirection = murderAlgo(gameState);
+            string murderDirection = murderAlgo(gameState);
             if (!string.IsNullOrEmpty(murderDirection)) {
                 Console.Out.WriteLine("WARWARWAR");
                 return murderDirection;
@@ -64,29 +64,29 @@ namespace Coveo
             }
             heroPos = gameState.myHero.pos;
 
-            PathData pathData = null;
+            Tuple<PathData, TargetInfo> pathDataAndTarget = null;
             if (target != null) {
                 Console.WriteLine("EvenBestChoice: Current target: ({0},{1}) [tile {2}]", target.pos.x, target.pos.y, target.tile);
-                pathData = pathfinder.pathTo(target.pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
+                pathDataAndTarget = Tuple.Create(pathfinder.pathTo(target.pos, gameState.myHero.pos, gameState.board, SPIKE_COST), target);
             } else {
                 // Seek mine if possible, otherwise seek a tavern
-                if (gameState.myHero.life >= 50) {
-                    pathData = SeekMine(gameState, pathfinder);
+                if (gameState.myHero.life >= 35) {
+                    pathDataAndTarget = SeekMine(gameState, pathfinder);
                 }
-                if (pathData == null && gameState.myHero.life < 50) {
-                    pathData = SeekTavern(gameState, pathfinder);
+                if (pathDataAndTarget == null || pathDataAndTarget.Item1.lostHealth >= gameState.myHero.life) {
+                    pathDataAndTarget = SeekTavern(gameState, pathfinder);
                 }
             }
 
             // If this is the last move, release target unless it's a tavern and we're < 90 life
-            if (target != null && pathData != null && pathData.nextDirection != Direction.Stay &&
+            if (target != null && pathDataAndTarget != null && pathDataAndTarget.Item1.nextDirection != Direction.Stay &&
                 Pos.DistanceBetween(target.pos, gameState.myHero.pos) <= 1 && (target.tile != Tile.TAVERN || gameState.myHero.life >= 90)) {
 
                 Console.WriteLine("EvenBestChoice: Reached destination ({0},{1}) [{2}], releasing target",
                     target.pos.x, target.pos.y, target.tile);
                 target = null;
             }
-            string nextDirection = pathData != null ? pathData.nextDirection : null;
+            string nextDirection = pathDataAndTarget != null ? pathDataAndTarget.Item1.nextDirection : null;
             return !String.IsNullOrEmpty(nextDirection) ? nextDirection : Direction.Stay;
         }
 
@@ -129,7 +129,7 @@ namespace Coveo
             return "";
         }
 
-        private PathData SeekMine(GameState gameState, IPathfinder pathfinder)
+        private Tuple<PathData, TargetInfo> SeekMine(GameState gameState, IPathfinder pathfinder)
         {
             List<Tile> mineTiles = new List<Tile>(new[] {
                 Tile.GOLD_MINE_NEUTRAL,
@@ -150,12 +150,12 @@ namespace Coveo
             return SeekTiles(gameState, pathfinder, MINE_COST, mineTiles.ToArray());
         }
 
-        private PathData SeekTavern(GameState gameState, IPathfinder pathfinder)
+        private Tuple<PathData, TargetInfo> SeekTavern(GameState gameState, IPathfinder pathfinder)
         {
             return SeekTiles(gameState, pathfinder, TAVERN_COST, Tile.TAVERN);
         }
 
-        private PathData SeekTiles(GameState gameState, IPathfinder pathfinder, int tileCost, params Tile[] soughtTiles)
+        private Tuple<PathData, TargetInfo> SeekTiles(GameState gameState, IPathfinder pathfinder, int tileCost, params Tile[] soughtTiles)
         {
             // Scan game board and find path data to all matching tiles
             List<Tuple<Pos, Tile, PathData>> moves = new List<Tuple<Pos, Tile, PathData>>();
@@ -185,17 +185,18 @@ namespace Coveo
             moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
 
             // Find a move that will take us to the target.
-            PathData pathData = null;
+            Tuple<PathData, TargetInfo> res = null;
             if (moves.Count != 0 && moves[0].Item3.distance < 1000) {
-                Debug.Assert(target == null);
-                pathData = moves[0].Item3;
-                target = new TargetInfo(moves[0].Item1, pathData.distance, moves[0].Item2);
-                if (pathData.lostHealth >= gameState.myHero.life) {
+                res = Tuple.Create(moves[0].Item3, new TargetInfo(moves[0].Item1, moves[0].Item3.distance, moves[0].Item2));
+                if (res.Item1.lostHealth >= gameState.myHero.life) {
                     Console.WriteLine("EvenBestChoice: WARNING: current choice will kill us: costs {0}, remaining life {1}",
-                        pathData.lostHealth, gameState.myHero.life);
+                        res.Item1.lostHealth, gameState.myHero.life);
+                }
             }
+            if (res != null && res.Item1 == null) {
+                res = null;
             }
-            return pathData;
+            return res;
         }
     }
 }
