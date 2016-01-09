@@ -11,7 +11,6 @@ namespace CoveoBlitz.RandomBot
 	/// </summary>
 	public class RandomBot : ISimpleBot
 	{
-		private DateTime enterDate = DateTime.Now;
 		private readonly Random random = new Random ();
 
 		/// <summary>
@@ -56,9 +55,6 @@ namespace CoveoBlitz.RandomBot
 			}
 
 			Console.WriteLine ("Completed turn {0}, going {1}", state.currentTurn, direction);
-
-			Console.WriteLine (DateTime.Now.Millisecond - enterDate.Millisecond + "ms");
-			enterDate = DateTime.Now;
 
 			return direction;
 		}

@@ -24,7 +24,6 @@ namespace CoveoBlitz
         /// <param name="simpleBot"The ISimplebot to run></param>
         /// <param name="showGame">Wetherwe want to open a game view</param>
         public SimpleBotRunner(ApiToolkit api, ISimpleBot simpleBot, Boolean showGame = true)
-
         {
             this.simpleBot = simpleBot;
             this.api = api;
