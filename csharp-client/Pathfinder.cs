@@ -6,6 +6,6 @@ namespace Coveo
 {
     public interface IPathfinder
     {
-        PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 5);
+        PathData pathTo(Pos target, Pos currentLocation, GameState gameState, int spikeCost = 5);
     }
 }

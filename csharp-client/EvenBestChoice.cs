@@ -57,7 +57,7 @@ namespace Coveo
             PathData pathData = null;
             if (target != null) {
                 Console.WriteLine("EvenBestChoice: Current target: ({0},{1}) [tile {2}]", target.pos.x, target.pos.y, target.tile);
-                pathData = pathfinder.pathTo(target.pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
+                pathData = pathfinder.pathTo(target.pos, gameState.myHero.pos, gameState, SPIKE_COST);
             } else {
                 // Seek mine if possible, otherwise seek a tavern
                 if (gameState.myHero.life >= 50) {
@@ -117,7 +117,7 @@ namespace Coveo
                     Tile tile = gameState.board[x][y];
                     if (tiles.Contains(tile)) {
                         Pos pos = new Pos(x, y);
-                        PathData curPathData = pathfinder.pathTo(pos, gameState.myHero.pos, gameState.board, SPIKE_COST);
+                        PathData curPathData = pathfinder.pathTo(pos, gameState.myHero.pos, gameState, SPIKE_COST);
                         
                         // Fix health if we don't have one
                         if (curPathData.lostHealth == 0) {

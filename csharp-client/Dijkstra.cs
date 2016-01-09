@@ -9,10 +9,13 @@ namespace Coveo
 {
     class Disjkstra : IPathfinder
     {
-        public PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 5)
+        public PathData pathTo(Pos target, Pos currentLocation, GameState gameState, int spikeCost = 5)
         {
             //int resultCost = 0;
             PathData pathData = new PathData();
+            Tile[][] board = gameState.board;
+            Hero[] others = gameState.heroes.Where(hero => hero.id != gameState.myHero.id).ToArray();
+
             int size = board.GetLength(0);
             int[][] pointValues = new int[size][];
             for (int x = 0; x < size; x++) 
@@ -38,6 +41,11 @@ namespace Coveo
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
+
+                        if (IsHeroClose(x, y, others)) {
+                            pointValues[x][y] += 1;
+                        }
+
                         newMarkedPoints.Add(pointValues[x][y], new Pos(x, y));
                     }
                 }
@@ -50,6 +58,11 @@ namespace Coveo
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
+
+                        if (IsHeroClose(x, y, others)) {
+                            pointValues[x][y] += 1;
+                        }
+
                         newMarkedPoints.Add(pointValues[x][y], new Pos(x, y));
                     }
                 }
@@ -62,6 +75,11 @@ namespace Coveo
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
+
+                        if (IsHeroClose(x, y, others)) {
+                            pointValues[x][y] += 1;
+                        }
+
                         newMarkedPoints.Add(pointValues[x][y], new Pos(x, y));
                     }
                 }
@@ -70,6 +88,11 @@ namespace Coveo
                 if(x<= size && x >=0 && y <= size && y >=0) {
                     if (target.x == x && target.y == y) {
                         pathData.distance = tilePrice(board[x][y]) + basecost + 1;
+
+                        if (IsHeroClose(x, y, others)) {
+                            pointValues[x][y] += 1;
+                        }
+
                         break;
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
@@ -152,6 +175,7 @@ namespace Coveo
             pathData.lostHealth = pathData.distance;
             return pathData;
         }
+
         private static int tilePrice(Tile tile)
         {
             switch (tile) {
@@ -172,6 +196,12 @@ namespace Coveo
                 case Tile.TAVERN:
                     return -1;}
             return -1;
+        }
+
+        private bool IsHeroClose(int x, int y, Hero[] heros)
+        {
+            Pos pos = new Pos(x, y);
+            return heros.Any(hero => Pos.DistanceBetween(pos, hero.pos) <= 1);
         }
     }
 
