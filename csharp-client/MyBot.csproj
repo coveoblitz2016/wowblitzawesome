@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Bot\AStar.cs" />
     <Compile Include="Bot\BestBot.cs" />
+    <Compile Include="Bot\ManualBot.cs" />
     <Compile Include="Core\DataContracts.cs" />
     <Compile Include="Core\Enums.cs" />
     <Compile Include="Direction.cs" />
