@@ -86,9 +86,9 @@ namespace Coveo
                 } else if (move == Direction.West) {
                     moveStr = Direction.West;
                 }
-                if (moveStr == null) {
+                
                     Console.WriteLine("EvenBestChoice: unknown direction: {0}", move);
-                }
+                
                 return moveStr ?? Direction.Stay;
             } else {
                 return Direction.Stay;

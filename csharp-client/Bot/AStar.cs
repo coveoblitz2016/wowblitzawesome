@@ -48,7 +48,7 @@ namespace Coveo.Bot
                     }
 
                     string neighborKey = GetKey(neighbor.x, neighbor.y);
-                    int curScore = Scores[GetKey(lowest.TilePos.x, lowest.TilePos.y)] + 1;
+                    int curScore = Scores[GetKey(lowest.TilePos.x, lowest.TilePos.y)] + tilePrice(board[neighbor.x][neighbor.y]);
                     if (!Opened.Any(tile => tile.TilePos.x == neighbor.x && tile.TilePos.y == neighbor.y)) {
                         Opened.Add(new InternalTile { TilePos = new Pos { x = neighbor.x, y = neighbor.y } });
                     } else if (curScore >= (Scores.ContainsKey(neighborKey) ? Scores[neighborKey] : int.MaxValue)) {
@@ -122,11 +122,11 @@ namespace Coveo.Bot
             }
 
             if (a.y > b.y) {
-                return Direction.West;
+                return Direction.East;
             }
 
             if(a.y < b.y)
-                return Direction.East;
+                return Direction.West;
 
             return Direction.Stay;
         }
@@ -135,26 +135,38 @@ namespace Coveo.Bot
         {
             List<Pos> lst = new List<Pos>();
 
-            if (current.x + 1 < maxX && IsWalkable(tiles[current.x + 1][current.y]))
+            if (current.x + 1 < maxX)
                 lst.Add(new Pos { x = current.x + 1, y = current.y });
 
-            if (current.x - 1 >= 0 && IsWalkable(tiles[current.x - 1][current.y])) {
+            if (current.x - 1 >= 0) {
                 lst.Add(new Pos { x = current.x - 1, y = current.y });
             }
 
-            if (current.y + 1 < maxY && IsWalkable(tiles[current.x][current.y + 1])) {
+            if (current.y + 1 < maxY) {
                 lst.Add(new Pos { x = current.x, y = current.y + 1 });
             }
 
-            if(current.y - 1 >= 0 && IsWalkable(tiles[current.x][current.y - 1]))
+            if(current.y - 1 >= 0)
                 lst.Add(new Pos { x = current.x, y = current.y - 1 });
 
             return lst;
         }
 
-        private bool IsWalkable(Tile tile)
+        private static int tilePrice(Tile tile)
         {
-            return tile == Tile.FREE;
+            switch (tile) {
+                case Tile.FREE:
+                case Tile.GOLD_MINE_NEUTRAL:
+                case Tile.GOLD_MINE_1:
+                case Tile.GOLD_MINE_2:
+                case Tile.GOLD_MINE_3:
+                case Tile.GOLD_MINE_4:
+                    return 1;
+                case Tile.SPIKES:
+                    return 10;
+                default:
+                    return 100;
+            }
         }
     }
 }

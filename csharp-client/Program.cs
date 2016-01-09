@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2005-2016, Coveo Solutions Inc.
 
 using System;
+using Coveo.Bot;
 using CoveoBlitz;
 using CoveoBlitz.RandomBot;
 using CoveoBlitz.WowBlitzAwsome.Bot;
@@ -31,8 +32,8 @@ namespace Coveo
             string gameId = args.Length == 3 && !trainingMode ? args[2] : null;
             bool showBrowser = trainingMode && args.Length == 3;
 
-            IBestChoice bestChoice = null;//new EvenBestChoice();
-            IPathfinder pathfinder = null;//new Disjkstra();
+            IBestChoice bestChoice = new EvenBestChoice();
+            IPathfinder pathfinder = new AStar();
 
             ISimpleBot bot;
             if (bestChoice != null && pathfinder != null) {
@@ -41,10 +42,10 @@ namespace Coveo
                 bot = new RandomBot();
             }
             
-			// add a random param to start browser in training mode
+            // add a random param to start browser in training mode
             SimpleBotRunner runner = new SimpleBotRunner(
                 new ApiToolkit(serverURL, apiKey, trainingMode, gameId),
-				bot,
+                bot,
                 showBrowser);
 
             runner.Run();
