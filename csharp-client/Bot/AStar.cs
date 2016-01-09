@@ -17,7 +17,7 @@ namespace Coveo.Bot
 
         public PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 5)
         {
-            HashSet<Pos>
+			return null;
         }
     }
 }
