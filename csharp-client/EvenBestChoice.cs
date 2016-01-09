@@ -88,8 +88,22 @@ namespace Coveo
 
         private String murderAlgo(GameState gameState)
         {
+            int size = gameState.board.Length -1 ;
             Pos myPos = gameState.myHero.pos;
             foreach(Hero hero in gameState.heroes) {
+
+                if (hero.pos.x < size && gameState.board[hero.pos.x + 1][hero.pos.y] == Tile.TAVERN) {
+                    continue;
+                }
+                if (hero.pos.y < size && gameState.board[hero.pos.x][hero.pos.y + 1] == Tile.TAVERN) {
+                    continue;
+                }
+                if (hero.pos.x > 0 && gameState.board[hero.pos.x - 1][hero.pos.y] == Tile.TAVERN) {
+                    continue;
+                }
+                if (hero.pos.y > 0 && gameState.board[hero.pos.x][hero.pos.y - 1] == Tile.TAVERN) {
+                    continue;
+                }
                 if (Pos.DistanceBetween(hero.pos, hero.spawnPos) == 0) {
                     continue;
                 }
@@ -106,16 +120,16 @@ namespace Coveo
                         }
                     } else if (Math.Abs(myPos.x - hero.pos.x) + Math.Abs(myPos.y - hero.pos.y) == 1) {
                         //Maybe there's a tavern
-                        if (gameState.board[myPos.x + 1][myPos.y] == Tile.TAVERN) {
+                        if (myPos.x < size && gameState.board[myPos.x + 1][myPos.y] == Tile.TAVERN) {
                             return Direction.South;
                         }
-                        if (gameState.board[myPos.x][myPos.y + 1] == Tile.TAVERN) {
+                        if (myPos.y < size && gameState.board[myPos.x][myPos.y + 1] == Tile.TAVERN) {
                             return Direction.East;
                         }
-                        if (gameState.board[myPos.x - 1][myPos.y] == Tile.TAVERN) {
+                        if (myPos.x > 0 && gameState.board[myPos.x - 1][myPos.y] == Tile.TAVERN) {
                             return Direction.North;
                         }
-                        if (gameState.board[myPos.x][myPos.y - 1] == Tile.TAVERN) {
+                        if (myPos.y > 0 && gameState.board[myPos.x][myPos.y - 1] == Tile.TAVERN) {
                             return Direction.West;
                         }
                         return Direction.Stay;
