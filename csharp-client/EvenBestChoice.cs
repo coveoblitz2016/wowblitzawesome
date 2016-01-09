@@ -53,21 +53,21 @@ namespace Coveo
             // Scan game board and find path data to all matching tiles
             List<Tuple<Pos, Tile, PathData>> moves = new List<Tuple<Pos, Tile, PathData>>();
             SortedSet<Tile> tiles = new SortedSet<Tile>(soughtTiles);
-            for (int i = 0; i < gameState.board.Length; ++i) {
-                for (int j = 0; j < gameState.board[i].Length; ++j) {
-                    Tile tile = gameState.board[i][j];
+            for (int x = 0; x < gameState.board.Length; ++x) {
+                for (int y = 0; y < gameState.board[x].Length; ++y) {
+                    Tile tile = gameState.board[x][y];
                     if (tiles.Contains(tile)) {
-                        Console.WriteLine("EvenBestChoice: seeking path to ({0},{1}) [tile {2}]", i, j, tile);
-                        moves.Add(Tuple.Create(new Pos(i, j), tile, (PathData) null));
+                        //Console.WriteLine("EvenBestChoice: seeking path to ({0},{1}) [tile {2}]", x, y, tile);
+                        moves.Add(Tuple.Create(new Pos(x, y), tile, (PathData) null));
                     }
                 }
             }
-            Console.WriteLine("EvenBestChoice: seeking paths to {0} tiles", moves.Count);
+            //Console.WriteLine("EvenBestChoice: seeking paths to {0} tiles", moves.Count);
             for (int i = 0; i < moves.Count; ++i) {
                 Stopwatch watch = Stopwatch.StartNew();
                 PathData pathData = pathfinder.pathTo(moves[i].Item1, gameState.myHero.pos, gameState.board);
-                Console.WriteLine("EvenBestChoice: sought path to ({0},{1}) [tile {2}] in {3}ms",
-                    moves[i].Item1.x, moves[i].Item1.y, moves[i].Item2, watch.ElapsedMilliseconds);
+                //Console.WriteLine("EvenBestChoice: sought path to ({0},{1}) [tile {2}] in {3}ms",
+                //    moves[i].Item1.x, moves[i].Item1.y, moves[i].Item2, watch.ElapsedMilliseconds);
                 moves[i] = Tuple.Create(moves[i].Item1, moves[i].Item2, pathData);
             }
 
