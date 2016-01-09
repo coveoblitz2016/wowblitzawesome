@@ -73,6 +73,7 @@
     <Compile Include="Bot\RandomBot.cs" />
     <Compile Include="Core\ApiToolkit.cs" />
     <Compile Include="Core\SimpleBotRunner.cs" />
+    <Compile Include="Bot\PriorityFinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
