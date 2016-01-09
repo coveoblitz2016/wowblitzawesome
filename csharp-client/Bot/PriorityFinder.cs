@@ -12,17 +12,17 @@ namespace Coveo
 		/// <summary>
 		/// Find where thr bot should go
 		/// </summary>
-		/// <returns>The Tavern tile or -1 if it should find a gold mine</returns>
+		/// <returns>The Tavern tile or Free if it should find a gold mine</returns>
 		/// <param name="state">State.</param>
-		public int getPriority (GameState state)
+		public Tile getPriority (GameState state)
 		{
 			int life = state.myHero.life;
-			int tileToGo;
+			Tile tileToGo;
 
 			// TODO find the distance between the bot and the tavern, eval life required to go to tavern
 
 			if (life > 40) {
-				tileToGo = -1;
+				tileToGo = Tile.FREE;
 			} else {
 				tileToGo = Tile.TAVERN;
 			}

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Coveo
 {
-    class Location
+    public class Location
     {
-        int x;
-        int y;
+        //int x;
+        //int y;
     }
 }

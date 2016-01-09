@@ -61,9 +61,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot\AStar.cs" />
+    <Compile Include="Bot\BestBot.cs" />
     <Compile Include="Core\DataContracts.cs" />
     <Compile Include="Core\Enums.cs" />
     <Compile Include="Direction.cs" />
+    <Compile Include="IBestChoice.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="PathData.cs" />
     <Compile Include="Pathfinder.cs" />
