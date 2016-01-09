@@ -65,10 +65,10 @@ namespace Coveo
                 pathData = pathfinder.pathTo(target.pos, gameState.myHero.pos, gameState, SPIKE_COST);
             } else {
                 // Seek mine if possible, otherwise seek a tavern
-                if (gameState.myHero.life >= 50) {
+                if (gameState.myHero.life >= 35) {
                     pathData = SeekMine(gameState, pathfinder);
                 }
-                if (pathData == null && gameState.myHero.life < 50) {
+                if (pathData == null || pathData.lostHealth >= gameState.myHero.life) {
                     pathData = SeekTavern(gameState, pathfinder);
                 }
             }
@@ -203,7 +203,7 @@ namespace Coveo
                 if (pathData.lostHealth >= gameState.myHero.life) {
                     Console.WriteLine("EvenBestChoice: WARNING: current choice will kill us: costs {0}, remaining life {1}",
                         pathData.lostHealth, gameState.myHero.life);
-            }
+                }
             }
             return pathData;
         }
