@@ -40,6 +40,11 @@ namespace Coveo
 
         public string BestMove(GameState gameState, IPathfinder pathfinder)
         {
+            String murderDirection = murderAlgo(gameState);
+            if (!string.IsNullOrEmpty(murderDirection)) {
+                Console.Out.WriteLine("WARWARWAR");
+                return murderDirection;
+            }
             // If we suddenly lost a lot of life, maybe we should reconsider.
             if (heroLife.HasValue && heroLife.Value >= (gameState.myHero.life + 20)) {
                 Console.WriteLine("EvenBestChoice: LOW ON LIFE! Maybe we were attacked?");
@@ -79,6 +84,45 @@ namespace Coveo
             lastPathData = pathData;
             string nextDirection = pathData != null ? pathData.nextDirection : null;
             return !String.IsNullOrEmpty(nextDirection) ? nextDirection : Direction.Stay;
+        }
+
+        private String murderAlgo(GameState gameState)
+        {
+            Pos myPos = gameState.myHero.pos;
+            foreach(Hero hero in gameState.heroes) {
+                if (Pos.DistanceBetween(hero.pos, hero.spawnPos) == 0) {
+                    continue;
+                }
+                if (hero.life < gameState.myHero.life) {
+                    if (Math.Abs(myPos.x - hero.pos.x) + Math.Abs(myPos.y - hero.pos.y) == 2) {
+                        if (myPos.x > hero.pos.x) {
+                            return Direction.North;
+                        } else if (myPos.x < hero.pos.x) {
+                            return Direction.South;
+                        } else if (myPos.y > hero.pos.y) {
+                            return Direction.West;
+                        } else {
+                            return Direction.East;
+                        }
+                    } else if (Math.Abs(myPos.x - hero.pos.x) + Math.Abs(myPos.y - hero.pos.y) == 1) {
+                        //Maybe there's a tavern
+                        if (gameState.board[myPos.x + 1][myPos.y] == Tile.TAVERN) {
+                            return Direction.South;
+                        }
+                        if (gameState.board[myPos.x][myPos.y + 1] == Tile.TAVERN) {
+                            return Direction.East;
+                        }
+                        if (gameState.board[myPos.x - 1][myPos.y] == Tile.TAVERN) {
+                            return Direction.North;
+                        }
+                        if (gameState.board[myPos.x][myPos.y - 1] == Tile.TAVERN) {
+                            return Direction.West;
+                        }
+                        return Direction.Stay;
+                    }
+                }
+            }
+            return "";
         }
 
         private PathData SeekMine(GameState gameState, IPathfinder pathfinder)
@@ -145,7 +189,7 @@ namespace Coveo
                 if (pathData.lostHealth >= gameState.myHero.life) {
                     Console.WriteLine("EvenBestChoice: WARNING: current choice will kill us: costs {0}, remaining life {1}",
                         pathData.lostHealth, gameState.myHero.life);
-                }
+            }
             }
             return pathData;
         }

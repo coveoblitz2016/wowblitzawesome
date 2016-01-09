@@ -9,8 +9,10 @@ namespace Coveo
 {
     class Disjkstra : IPathfinder
     {
-        public PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 5)
+        private int spikePrice;
+        public PathData pathTo(Pos target, Pos currentLocation, Tile[][] board, int spikeCost = 10)
         {
+            spikePrice = spikeCost;
             //int resultCost = 0;
             PathData pathData = new PathData();
             int size = board.GetLength(0);
@@ -152,25 +154,27 @@ namespace Coveo
             pathData.lostHealth = pathData.distance;
             return pathData;
         }
-        private static int tilePrice(Tile tile)
+        private int tilePrice(Tile tile)
         {
             switch (tile) {
                 case Tile.FREE:
                     return 0;
                 case Tile.SPIKES:
-                    return 10;
+                    return spikePrice;
                 case Tile.GOLD_MINE_1:
                 case Tile.GOLD_MINE_2:
                 case Tile.GOLD_MINE_3:
                 case Tile.GOLD_MINE_4:
                 case Tile.GOLD_MINE_NEUTRAL:
                 case Tile.IMPASSABLE_WOOD:
+                case Tile.TAVERN:
+                    return -1;
                 case Tile.HERO_1:
                 case Tile.HERO_2:
                 case Tile.HERO_3:
                 case Tile.HERO_4:
-                case Tile.TAVERN:
-                    return -1;}
+                    return 10;
+            }
             return -1;
         }
     }
