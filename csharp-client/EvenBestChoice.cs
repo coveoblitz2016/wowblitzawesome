@@ -15,6 +15,22 @@ namespace Coveo
     {
         public string BestMove(GameState gameState, IPathfinder pathfinder)
         {
+            if (gameState.myHero.life < 90) {
+                Pos heroPos = gameState.myHero.pos;
+                int size = gameState.board.Length;
+                if (heroPos.x < size && gameState.board[heroPos.x + 1][heroPos.y] == Tile.TAVERN) {
+                    return Direction.South;
+                }
+                if (heroPos.x > 0 && gameState.board[heroPos.x - 1][heroPos.y] == Tile.TAVERN) {
+                    return Direction.North;
+                }
+                if (heroPos.y < size && gameState.board[heroPos.x][heroPos.y + 1] == Tile.TAVERN) {
+                    return Direction.East;
+                }
+                if (heroPos.y > 0 && gameState.board[heroPos.x][heroPos.y - 1] == Tile.TAVERN) {
+                    return Direction.West;
+                }
+            }
             if (gameState.myHero.life >= 50) {
                 return SeekMine(gameState, pathfinder);
             } else {
@@ -89,6 +105,7 @@ namespace Coveo
                 if (moveStr == null) {
                     Console.WriteLine("EvenBestChoice: unknown direction: {0}", move);
                 }
+                Console.WriteLine("moving to tile at " + moves[0].Item1.x + "," + moves[0].Item1.y);
                 return moveStr ?? Direction.Stay;
             } else {
                 return Direction.Stay;

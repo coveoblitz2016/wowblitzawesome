@@ -82,7 +82,7 @@ namespace Coveo
             //backtrace
             Pos currentPos = target;
             while (true) {
-                Console.Out.WriteLine(currentPos.x + "," + currentPos.y);
+                //Console.Out.WriteLine(currentPos.x + "," + currentPos.y);
                 int x, y, a=99999,b=99999,c=99999,d=99999;
                 
                 x = currentPos.x - 1;
