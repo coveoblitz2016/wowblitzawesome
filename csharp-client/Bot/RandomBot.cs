@@ -30,7 +30,7 @@ namespace CoveoBlitz.RandomBot
 		{
 			string direction;
 
-			var canMove = state.myHero.life > 10;
+			var canMove = state.myHero.life > 10 || state.myHero.mineCount == 0;
 
 			if (canMove) {
 				switch (random.Next (0, 5)) {
