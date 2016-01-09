@@ -18,7 +18,7 @@ namespace CoveoBlitz.RandomBot
         /// </summary>
         public void Setup()
         {
-            Console.WriteLine("Coveo's C# RandomBot");
+            Console.WriteLine("Coveo's C# Wow Blitz AWSOME bot!");
         }
 
         /// <summary>
