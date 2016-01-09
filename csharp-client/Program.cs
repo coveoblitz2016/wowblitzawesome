@@ -19,32 +19,33 @@ namespace Coveo
         private static void Main(string[] args)
         {
             if (args.Length < 2) {
-                Console.WriteLine("Usage: myBot.exe key training|arena|HAX gameId");
-                Console.WriteLine("gameId is optionnal when in training mode");
+                Console.WriteLine("Usage: myBot.exe key training|arena gameId|showbrowser");
+                Console.WriteLine("gameId is used to show browser in training mode");
                 Console.ReadKey();
                 return;
             }
 
             string serverURL = "http://blitz2016.xyz:8080";
-            bool trainingMode = args[1] == "training" || args[1] == "HAX";
-            string gameId = args.Length == 3 ? args[2] : null;
+            string apiKey = args[0];
+            bool trainingMode = args[1] == "training";
+            string gameId = args.Length == 3 && !trainingMode ? args[2] : null;
+            bool showBrowser = trainingMode && args.Length == 3;
 
-            //IBestChoice bestChoice = new EvenBestChoice();
-            //IPathfinder pathfinder = new Disjkstra();
+            IBestChoice bestChoice = null;//new EvenBestChoice();
+            IPathfinder pathfinder = null;//new Disjkstra();
 
             ISimpleBot bot;
-            if (args[1] == "HAX") {
-                bot = new ManualBot();
-            //} else if (bestChoice != null && pathfinder != null) {
-            //    bot = new BestBot(bestChoice, pathfinder);
+            if (bestChoice != null && pathfinder != null) {
+                bot = new BestBot(bestChoice, pathfinder);
             } else {
                 bot = new RandomBot();
             }
             
 			// add a random param to start browser in training mode
             SimpleBotRunner runner = new SimpleBotRunner(
-                new ApiToolkit(serverURL, args[0], trainingMode, gameId),
-				bot, args[1] == "training" && args.Length == 3);
+                new ApiToolkit(serverURL, apiKey, trainingMode, gameId),
+				bot,
+                showBrowser);
 
             runner.Run();
 
