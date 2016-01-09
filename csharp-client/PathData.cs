@@ -8,7 +8,7 @@ namespace Coveo
 {
     public class PathData
     {
-        public Direction nextDirection;
+        public string nextDirection;
         public int lostHealth;
         public int distance;
     }

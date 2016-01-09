@@ -67,7 +67,6 @@
     <Compile Include="Dijkstra.cs" />
     <Compile Include="Core\DataContracts.cs" />
     <Compile Include="Core\Enums.cs" />
-    <Compile Include="Direction.cs" />
     <Compile Include="EvenBestChoice.cs" />
     <Compile Include="IBestChoice.cs" />
     <Compile Include="Location.cs" />
