@@ -21,6 +21,7 @@ namespace Coveo
         public string BestMove(GameState gameState, IPathfinder pathfinder)
         {
             if (target != null) {
+                Console.WriteLine("EvenBestChoice: Current target: ({0},{1}) [tile {2}]", target.x, target.y, targetTile);
                 PathData pathData = pathfinder.pathTo(target, gameState.myHero.pos, gameState.board, SPIKE_COST);
                 // If this is the last move, release target unless it's a tavern and we're < 90 life
                 if (pathData.distance <= 1 && (targetTile != Tile.TAVERN || gameState.myHero.life >= 90)) {
@@ -88,14 +89,14 @@ namespace Coveo
             moves.Sort((a, b) => a.Item3.lostHealth - b.Item3.lostHealth);
 
             string move = null;
-            if (moves.Count != 0) {
+            if (moves.Count != 0 && moves[0].Item3.distance < 1000) {
                 Debug.Assert(target == null);
                 Debug.Assert(targetTile == Tile.FREE);
                 target = moves[0].Item1;
                 targetTile = moves[0].Item2;
                 move = moves[0].Item3.nextDirection;
             }
-            return move ?? Direction.Stay;
+            return !String.IsNullOrEmpty(move) ? move : Direction.Stay;
         }
     }
 }
