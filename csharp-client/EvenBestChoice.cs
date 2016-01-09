@@ -15,11 +15,19 @@ namespace Coveo
     {
         public const int SPIKE_COST = 10;
 
+        private int? lastLife;
         private Pos target;
         private Tile targetTile = Tile.FREE;
 
         public string BestMove(GameState gameState, IPathfinder pathfinder)
         {
+            // If we suddenly lost a lot of life, maybe we should reconsider.
+            if (lastLife.HasValue && lastLife.Value >= (gameState.myHero.life + 20)) {
+                target = null;
+                targetTile = Tile.FREE;
+            }
+            lastLife = gameState.myHero.life;
+
             if (target != null) {
                 Console.WriteLine("EvenBestChoice: Current target: ({0},{1}) [tile {2}]", target.x, target.y, targetTile);
                 PathData pathData = pathfinder.pathTo(target, gameState.myHero.pos, gameState.board, SPIKE_COST);
