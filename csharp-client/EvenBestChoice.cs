@@ -65,7 +65,7 @@ namespace Coveo
 
             if (moves.Count != 0) {
                 // #clp TODO fixme
-                return CoveoBlitz.Direction.Stay;
+                return moves[0].nextDirection.ToString();
             } else {
                 return CoveoBlitz.Direction.Stay;
             }
