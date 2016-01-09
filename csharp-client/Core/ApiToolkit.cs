@@ -14,7 +14,7 @@ namespace CoveoBlitz
         public const string ARENA_URL = "/api/arena";
 
         private readonly string uri;
-        private readonly string serverURL;
+        //private readonly string serverURL;
 
         public string playURL { get; private set; }
         public string viewURL { get; private set; }

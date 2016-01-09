@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using System.Threading;
 
 namespace CoveoBlitz
@@ -46,7 +47,12 @@ namespace CoveoBlitz
                 // Opens up a game view
                 if (showGame) {
                     new Thread(delegate() {
-                        System.Diagnostics.Process.Start(api.viewURL);
+                        string userName = WindowsIdentity.GetCurrent().Name;
+                        if (String.Compare(userName, @"coveo\clechasseur", true) == 0) {
+                            System.Diagnostics.Process.Start("chrome.exe", api.viewURL);
+                        } else {
+                            System.Diagnostics.Process.Start(api.viewURL);
+                        }
                     }).Start();
                 }
 
