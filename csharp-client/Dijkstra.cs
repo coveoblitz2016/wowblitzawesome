@@ -20,69 +20,68 @@ namespace Coveo
                pointValues[x] = new int[size];
             }
             pointValues[currentLocation.x][currentLocation.y] = 0;
-            List<Pos> newMarkedPoints = new List<Pos>();
-            newMarkedPoints.Add(currentLocation);
+            Queue<Pos> newMarkedPoints = new Queue<Pos>();
+            newMarkedPoints.Enqueue(currentLocation);
             while (newMarkedPoints.Count() != 0) {
-                Pos pos = newMarkedPoints.First();
-                newMarkedPoints.Remove(pos);
+                Pos pos = newMarkedPoints.Dequeue();
                 int basecost = pointValues[pos.x][pos.y];
                 int x;
                 int y;
                 x = pos.x;
                 y = pos.y + 1;
                 try {
+                    if (target.x == x && target.y == y) {
+                        pathData.distance = tilePrice(board[x][y]) + basecost + 1;
+                        break;
+                    }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Add(new Pos(x, y));
-                        if (target.x == x && target.y == y) {
-                            pathData.distance = tilePrice(board[x][y]) + basecost + 1;
-                            break;
-                        }
+                        newMarkedPoints.Enqueue(new Pos(x, y));
                     }
                 } catch (Exception) { }
                 x = pos.x + 1;
                 y = pos.y;
                 try {
+                    if (target.x == x && target.y == y) {
+                        pathData.distance = tilePrice(board[x][y]) + basecost + 1;
+                        break;
+                    }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Add(new Pos(x, y));
-                        if (target.x == x && target.y == y) {
-                            pathData.distance = tilePrice(board[x][y]) + basecost + 1;
-                            break;
-                        }
+                        newMarkedPoints.Enqueue(new Pos(x, y));
                     }
                 } catch (Exception) { }
                 x = pos.x - 1;
                 y = pos.y;
                 try {
+                    if (target.x == x && target.y == y) {
+                        pathData.distance = tilePrice(board[x][y]) + basecost + 1;
+                        break;
+                    }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Add(new Pos(x, y));
-                        if (target.x == x && target.y == y) {
-                            pathData.distance = tilePrice(board[x][y]) + basecost + 1;
-                            break;
-                        }
+                        newMarkedPoints.Enqueue(new Pos(x, y));
                     }
                 } catch (Exception) { }
                 x = pos.x;
                 y = pos.y - 1;
                 try {
+                    if (target.x == x && target.y == y) {
+                        pathData.distance = tilePrice(board[x][y]) + basecost + 1;
+                        break;
+                    }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Add(new Pos(x, y));
-                        if (target.x == x && target.y == y) {
-                            pathData.distance = tilePrice(board[x][y]) + basecost + 1;
-                            break;
-                        }
+                        newMarkedPoints.Enqueue(new Pos(x, y));
                     }
                 } catch (Exception) { }
             }
-            Console.Out.WriteLine(resultCost);
+            //Console.Out.WriteLine(resultCost);
 
             //backtrace
             Pos currentPos = target;
             while (true) {
-                Console.Out.WriteLine(currentPos.x + "," + currentPos.y);
+                //Console.Out.WriteLine(currentPos.x + "," + currentPos.y);
                 int x, y, a=99999,b=99999,c=99999,d=99999;
                     try {
                 x = currentPos.x - 1;
@@ -142,7 +141,7 @@ namespace Coveo
                     currentPos = new Pos(currentPos.x + 1, currentPos.y);
                 }
             }
-
+            Console.Out.WriteLine("Move to " + pathData.nextDirection + " with cost " + pathData.distance + " to go to" + target.x + "," + target.y);
             return pathData;
         }
         private static int tilePrice(Tile tile)
