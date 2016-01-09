@@ -52,9 +52,9 @@ namespace CoveoBlitz
 			return mineTiles;
 		}
 
-		private List<Pos> GetAvailableMinesPos (List<Tile> mineTiles, Tile[][] board)
+		private List<Pos> GetAvailableMinesPos ()
 		{
-			return mineTiles.Select ((Tile mineTile) => this.GetTilePos(mineTile)).ToList();
+			return this.GetAvailableMinesTiles().Select ((Tile mineTile) => this.GetTilePos(mineTile)).ToList();
 		}
     }
 }
