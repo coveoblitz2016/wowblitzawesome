@@ -20,11 +20,12 @@ namespace Coveo
                pointValues[x] = new int[size];
             }
             pointValues[currentLocation.x][currentLocation.y] = 1;
-            Queue<Pos> newMarkedPoints = new Queue<Pos>();
-            newMarkedPoints.Enqueue(currentLocation);
+            SortedList<int, Pos> newMarkedPoints = new SortedList<int, Pos>(new DuplicateKeyComparer<int>());
+            newMarkedPoints.Add(1, currentLocation);
             size--;
             while (newMarkedPoints.Count() != 0) {
-                Pos pos = newMarkedPoints.Dequeue();
+                Pos pos = newMarkedPoints.First().Value;
+                newMarkedPoints.RemoveAt(0);
                 int basecost = pointValues[pos.x][pos.y];
                 int x;
                 int y;
@@ -37,7 +38,7 @@ namespace Coveo
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Enqueue(new Pos(x, y));
+                        newMarkedPoints.Add(pointValues[x][y], new Pos(x, y));
                     }
                 }
                 x = pos.x + 1;
@@ -49,7 +50,7 @@ namespace Coveo
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Enqueue(new Pos(x, y));
+                        newMarkedPoints.Add(pointValues[x][y], new Pos(x, y));
                     }
                 }
                 x = pos.x - 1;
@@ -61,7 +62,7 @@ namespace Coveo
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Enqueue(new Pos(x, y));
+                        newMarkedPoints.Add(pointValues[x][y], new Pos(x, y));
                     }
                 }
                 x = pos.x;
@@ -73,7 +74,7 @@ namespace Coveo
                     }
                     if (tilePrice(board[x][y]) != -1 && pointValues[x][y] == 0) {
                         pointValues[x][y] = tilePrice(board[x][y]) + basecost + 1;
-                        newMarkedPoints.Enqueue(new Pos(x, y));
+                        newMarkedPoints.Add(pointValues[x][y], new Pos(x, y));
                     }
                 }
             }

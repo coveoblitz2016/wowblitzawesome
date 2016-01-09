@@ -64,6 +64,7 @@
     <Compile Include="Bot\AStar.cs" />
     <Compile Include="Bot\BestBot.cs" />
     <Compile Include="Bot\ManualBot.cs" />
+    <Compile Include="Comparator.cs" />
     <Compile Include="Dijkstra.cs" />
     <Compile Include="Core\DataContracts.cs" />
     <Compile Include="Core\Enums.cs" />
