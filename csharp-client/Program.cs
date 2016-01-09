@@ -30,7 +30,7 @@ namespace Coveo
             string gameId = args.Length == 3 ? args[2] : null;
 
             IBestChoice bestChoice = new EvenBestChoice();
-            IPathfinder pathfinder = null;
+            IPathfinder pathfinder = new Disjkstra();
 
             ISimpleBot bot;
             if (args[1] == "HAX") {
