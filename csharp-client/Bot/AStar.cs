@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using CoveoBlitz;
 
 namespace Coveo.Bot
@@ -43,7 +42,7 @@ namespace Coveo.Bot
                 Opened.Remove(lowest);
                 Closed.Add(lowest);
 
-                foreach (Pos neighbor in GetNeighbors(lowest.TilePos, board.Length, board[0].Length)) {
+                foreach (Pos neighbor in GetNeighbors(lowest.TilePos, board.Length, board[0].Length, board)) {
                     if (Closed.Any(tile => tile.TilePos.x == neighbor.x && tile.TilePos.y == neighbor.y)) {
                         continue;
                     }
@@ -56,9 +55,15 @@ namespace Coveo.Bot
                         continue;
                     }
 
-                    Navigated.Add(neighborKey, lowest);
-                    Scores.Add(neighborKey, curScore);
-                    FullScores.Add(neighborKey, curScore + GetDistance(neighbor, target));
+                    if (Navigated.ContainsKey(neighborKey)) {
+                        Navigated[neighborKey] = lowest;
+                        Scores[neighborKey] = curScore;
+                        FullScores[neighborKey] = curScore + GetDistance(neighbor, target);
+                    } else {
+                        Navigated.Add(neighborKey, lowest);
+                        Scores.Add(neighborKey, curScore);
+                        FullScores.Add(neighborKey, curScore + GetDistance(neighbor, target));
+                    }
                 }
             }
 
@@ -126,25 +131,30 @@ namespace Coveo.Bot
             return Direction.Stay;
         }
 
-        private List<Pos> GetNeighbors(Pos current, int maxX, int maxY)
+        private List<Pos> GetNeighbors(Pos current, int maxX, int maxY, Tile[][] tiles)
         {
             List<Pos> lst = new List<Pos>();
 
-            if (current.x + 1 < maxX)
+            if (current.x + 1 < maxX && IsWalkable(tiles[current.x + 1][current.y]))
                 lst.Add(new Pos { x = current.x + 1, y = current.y });
 
-            if (current.x - 1 >= 0) {
+            if (current.x - 1 >= 0 && IsWalkable(tiles[current.x - 1][current.y])) {
                 lst.Add(new Pos { x = current.x - 1, y = current.y });
             }
 
-            if (current.y + 1 < maxY) {
+            if (current.y + 1 < maxY && IsWalkable(tiles[current.x][current.y + 1])) {
                 lst.Add(new Pos { x = current.x, y = current.y + 1 });
             }
 
-            if(current.y - 1 >= 0)
+            if(current.y - 1 >= 0 && IsWalkable(tiles[current.x][current.y - 1]))
                 lst.Add(new Pos { x = current.x, y = current.y - 1 });
 
             return lst;
+        }
+
+        private bool IsWalkable(Tile tile)
+        {
+            return tile == Tile.FREE;
         }
     }
 }
