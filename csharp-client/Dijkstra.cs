@@ -19,7 +19,7 @@ namespace Coveo
             {
                pointValues[x] = new int[size];
             }
-            pointValues[currentLocation.x][currentLocation.y] = -1;
+            pointValues[currentLocation.x][currentLocation.y] = 1;
             Queue<Pos> newMarkedPoints = new Queue<Pos>();
             newMarkedPoints.Enqueue(currentLocation);
             size--;
@@ -82,14 +82,14 @@ namespace Coveo
             //backtrace
             Pos currentPos = target;
             while (true) {
-                //Console.Out.WriteLine(currentPos.x + "," + currentPos.y);
+                Console.Out.WriteLine(currentPos.x + "," + currentPos.y);
                 int x, y, a=99999,b=99999,c=99999,d=99999;
                 
                 x = currentPos.x - 1;
                 y = currentPos.y;
                 if (x <= size && x >= 0 && y <= size && y >= 0) {
                     if (currentLocation.x == x && currentLocation.y == y) {
-                        pathData.nextDirection = Direction.North;
+                        pathData.nextDirection = Direction.South;
                         break;
                     }
                     a = pointValues[x][y];
@@ -119,7 +119,7 @@ namespace Coveo
                 y = currentPos.y;
                 if (x <= size && x >= 0 && y <= size && y >= 0) {
                     if (currentLocation.x == x && currentLocation.y == y) {
-                        pathData.nextDirection = Direction.South;
+                        pathData.nextDirection = Direction.North;
                         break;
                     }
                     d = pointValues[x][y];
@@ -130,16 +130,16 @@ namespace Coveo
                 if (d == 0) { d = 10000; }
                 try {
                     if (a <= b && a <= c && a <= d) {
-                        pointValues[currentPos.x - 1][currentPos.y] = 9999999;
+                        pointValues[currentPos.x - 1][currentPos.y] = 123456789;// taken path
                         currentPos = new Pos(currentPos.x - 1, currentPos.y);
                     } else if (b <= a && b <= c && b <= d) {
-                        pointValues[currentPos.x][currentPos.y - 1] = 9999999;
+                        pointValues[currentPos.x][currentPos.y - 1] = 123456789;
                         currentPos = new Pos(currentPos.x, currentPos.y - 1);
                     } else if (c <= b && c <= a && c <= d) {
-                        pointValues[currentPos.x][currentPos.y + 1] = 9999999;
+                        pointValues[currentPos.x][currentPos.y + 1] = 123456789;
                         currentPos = new Pos(currentPos.x, currentPos.y + 1);
                     } else if (d <= b && d <= c && d <= a) {
-                        pointValues[currentPos.x + 1][currentPos.y] = 9999999;
+                        pointValues[currentPos.x + 1][currentPos.y] = 123456789;
                         currentPos = new Pos(currentPos.x + 1, currentPos.y);
                     }
                 } catch (Exception) {
@@ -148,16 +148,16 @@ namespace Coveo
                 } 
             }
             Console.Out.WriteLine("Move to " + pathData.nextDirection + " with cost " + pathData.distance + " to go to" + target.x + "," + target.y);
+            pathData.lostHealth = pathData.distance;
             return pathData;
         }
         private static int tilePrice(Tile tile)
         {
             switch (tile) {
                 case Tile.FREE:
-                case Tile.TAVERN:
                     return 0;
                 case Tile.SPIKES:
-                    return 5;
+                    return 10;
                 case Tile.GOLD_MINE_1:
                 case Tile.GOLD_MINE_2:
                 case Tile.GOLD_MINE_3:
@@ -168,6 +168,7 @@ namespace Coveo
                 case Tile.HERO_2:
                 case Tile.HERO_3:
                 case Tile.HERO_4:
+                case Tile.TAVERN:
                     return -1;}
             return -1;
         }
