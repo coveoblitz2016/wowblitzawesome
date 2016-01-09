@@ -28,8 +28,15 @@ namespace Coveo
             string serverURL = "http://blitz2016.xyz:8080";
             string gameId = args.Length == 3 ? args[2] : null;
 
-            ISimpleBot bot = new RandomBot();
-            //ISimpleBot bot = new BestBot();
+            IBestChoice bestChoice = new EvenBestChoice();
+            IPathfinder pathfinder = null;
+
+            ISimpleBot bot;
+            if (bestChoice != null && pathfinder != null) {
+                bot = new BestBot(bestChoice, pathfinder);
+            } else {
+                bot = new RandomBot();
+            }
 
             SimpleBotRunner runner = new SimpleBotRunner(
                 new ApiToolkit(serverURL, args[0], args[1] == "training", gameId),
