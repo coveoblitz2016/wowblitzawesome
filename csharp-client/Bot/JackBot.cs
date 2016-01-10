@@ -10,6 +10,8 @@ namespace Coveo
 
 		private IPathfinder pathfinder;
 
+		private Pos target;
+
 		public JackBot(IPathfinder pathfinder) {
 			this.pathfinder = pathfinder;
 		}
@@ -31,6 +33,7 @@ namespace Coveo
 
 		private string EvalBestMove (GameState state)
 		{
+			// There is more than one tavern...
 			Pos tavernPos = state.GetTilePos (Tile.TAVERN);
 
 			List<Pos> availableMinesPos = state.GetAvailableMinesPos ();
@@ -40,11 +43,13 @@ namespace Coveo
 
 			availableMinesPath.ForEach ((PathData minePath) => {
 				PathData pathBetweenMineAndTavern = this.pathfinder.pathTo(tavernPos, minePath.destination, state.board);
+
 				minePath.lostHealth += pathBetweenMineAndTavern.lostHealth;
+				minePath.lostHealth += 25;
 			});
 
 			availableMinesPath.Sort ((PathData pathA, PathData pathB) => {
-				return pathA.distance < pathB.distance ? 0 : 1;
+				return pathA.distance >= pathB.distance ? 0 : 1;
 			});
 
 			// Make sure not to suicide
